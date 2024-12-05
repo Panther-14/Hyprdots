@@ -10,22 +10,6 @@
 // ----------------------------------------------------- 
 //
 {
-    // Workspaces
-    "hyprland/workspaces" : {
-        "on-click": "activate",
-        "active-only": false,
-        "all-outputs": true,
-        "format": "{icon} {id}",
-        "format-icons": {
-			"urgent": "󰊠",
-			"active": "󰮯",
-			"default": ""
-        },
-        "persistent-workspaces": {
-             "*": 5
-        }       
-    },
-
     // Taskbar
     "wlr/taskbar": {
         "format": "{icon}",
@@ -34,7 +18,7 @@
         "on-click": "activate",
         "on-click-middle": "close",
         "ignore-list": [
-           "Alacritty"
+            "Alacritty"
         ],
         "app_ids-mapping": {
             "firefoxdeveloperedition": "firefox-developer-edition"
@@ -44,7 +28,21 @@
             "Foot Server": "Terminal"
         }
     },
-
+    // Workspaces
+    "hyprland/workspaces": {
+        "on-click": "activate",
+        "active-only": false,
+        "all-outputs": true,
+        "format": "{icon} {id}",
+        "format-icons": {
+            "urgent": "󰊠",
+            "active": "󰮯",
+            "default": ""
+        },
+        "persistent-workspaces": {
+            "*": 5
+        }
+    },
     // Hyprland Window
     "hyprland/window": {
         "rewrite": {
@@ -52,36 +50,30 @@
             "(.*) - Chromium": "$1",
             "(.*) - Brave Search": "$1",
             "(.*) - Outlook": "$1",
-            "(.*) Microsoft Teams": "$1"
+            "(.*) - Microsoft Teams": "$1",
+            "(.*) - Firefox": "$1"
         },
         "separate-outputs": true
-
-
     },
-    
     // Wallpaper
     "custom/wallpaper": {
         "format": "",
         "on-click": "waypaper",
         "on-click-right": "waypaper --random",
         "tooltip": false
-
     },
-
     // Rofi Application Launcher
     "custom/appmenu": {
         "format": "Apps",
         "on-click": "rofi -show drun -replace",
         "tooltip": false
     },
-    
     // Power Menu
     "custom/exit": {
         "format": "",
         "on-click": "wlogout",
         "tooltip": false
     },
-
     // Keyboard State
     "keyboard-state": {
         "numlock": true,
@@ -92,13 +84,11 @@
             "unlocked": ""
         }
     },
-
     // System tray
     "tray": {
-        // "icon-size": 21,
+        "icon-size": 21,
         "spacing": 10
     },
-
     // Clock
     "clock": {
         "format": "{:%H:%M}",
@@ -106,37 +96,31 @@
         "on-click": "ags -t calendar",
         "tooltip": false
     },
-
     // System
     "custom/system": {
-        "format": "",
+        "format": "Sys",
         "tooltip": false
     },
-
     // CPU
     "cpu": {
-        "format": "    {usage}%   ",
+        "format": "CPU {usage}%   ",
         "on-click": "kitty -e btop"
     },
-
     // Memory
     "memory": {
-        "format": "     {}%   ",
+        "format": "Memory   {}%   ",
         "on-click": "kitty -e htop"
     },
-
     // Harddisc space used
     "disk": {
         "interval": 30,
         "format": "D {percentage_used}% ",
         "path": "/",
         "on-click": "kitty -e htop"
-    }, 
-
+    },
     "hyprland/language": {
         "format": "/ K {short}"
     },
-
     // Group Hardware
     "group/hardware": {
         "orientation": "inherit",
@@ -144,7 +128,7 @@
             "transition-duration": 300,
             "children-class": "not-memory",
             "transition-left-to-right": false
-        },        
+        },
         "modules": [
             "custom/system",
             "disk",
@@ -153,7 +137,6 @@
             "hyprland/language"
         ]
     },
-    
     // Group Settings
     "group/settings": {
         "orientation": "inherit",
@@ -161,23 +144,21 @@
             "transition-duration": 300,
             "children-class": "not-memory",
             "transition-left-to-right": false
-        },        
+        },
         "modules": [
             "custom/settings",
             "custom/waybarthemes",
             "custom/wallpaper"
         ]
     },
-
     // Group Quicklinks
     "group/quicklinks": {
         "orientation": "horizontal",
         "modules": [
             "custom/filemanager",
             "custom/browser"
-         ]
+        ]
     },
-
     // Network
     "network": {
         "format": "{ifname}",
@@ -191,7 +172,6 @@
         "max-length": 50,
         "on-click": "kitty -e nmtui"
     },
-
     // Battery
     "battery": {
         "states": {
@@ -205,9 +185,14 @@
         "format-alt": "{icon}  {time}",
         // "format-good": "", // An empty format will hide the module
         // "format-full": "",
-        "format-icons": [" ", " ", " ", " ", " "]
+        "format-icons": [
+            " ",
+            " ",
+            " ",
+            " ",
+            " "
+        ]
     },
-
     // Pulseaudio
     "pulseaudio": {
         // "scroll-step": 1, // %, can be a float
@@ -224,20 +209,17 @@
             "phone": "",
             "portable": "",
             "car": "",
-            "default": ["", " ", " "]
+            "default": [
+                "",
+                " ",
+                " "
+            ]
         },
         "on-click": "pavucontrol"
     },
-
-    // PlayerPause
-    "custom/playerpause": {
-        "format": "⏯︎",
-        "on-click": "playerctl play-pause",
-        "tooltip": false,
-
-    // WaybarMedia
-    },
-    "modules-center": ["custom/waybar-media"],
+    "modules-center": [
+        "custom/waybar-media"
+    ],
     "custom/waybar-media": {
         "return-type": "json",
         "exec": "waybar-media.py status",
@@ -246,98 +228,80 @@
         "on-scroll-down": "waybar-media.py next",
         "escape": true
     },
-
+    // PlayerPause
+    "custom/playerpause": {
+        "format": "⏯︎",
+        "on-click": "playerctl play-pause",
+        "tooltip": false,
+        // WaybarMedia
+    },
     // PlayerNext
     "custom/playernext": {
         "format": "⏵︎",
         "on-click": "playerctl next",
         "tooltip": false,
-
     },
-
     // PlayerPrevious
     "custom/playerprevious": {
         "format": "⏴︎",
         "on-click": "playerctl previous",
         "tooltip": false,
-
     },
-
-    // Music Player
-    //"mpd": {
-    //    "max-length": 25,
-    //    "format": "<span foreground='#bb9af7'></span> <span foreground='#5c5cf2'> {title} </span>",
-    //    "format-paused": "  {title}",
-    //    "format-stopped": "<span foreground='#bb9af7'></span>",
-    //    "format-disconnected": "",
-    //    "on-click": "mpc --quiet toggle",
-    //    "on-click-right": "",
-    //    "on-click-middle": "",
-    //    "on-scroll-up": "mpc --quiet prev",
-    //    "on-scroll-down": "mpc --quiet next",
-    //    "smooth-scrolling-threshold": 5,
-    //    "tooltip-format": "{title} - {artist} ({elapsedTime:%M:%S}/{totalTime:%H:%M:%S})"
-    //},
     "mpd": {
-    	"tooltip": true,
-    	"tooltip-format": "{artist} - {album} - {title} - Total Time : {totalTime:%M:%S}",
-    	"format": " {elapsedTime:%M:%S}",
-	"format-paused": " {title}",
-    	"format-disconnected": "⚠  Disconnected",
-    	"format-stopped": " Not Playing",
-    	"on-click": "mpc --quiet toggle",
-    	"state-icons": {
-      		"playing": "",
-      		"paused": ""
-    	}
-  },
-
-    // Bluetooth
-    "bluetooth":{
-    	"format-on": "<span color='#e57474'></span>  Turned On",
-    	"format-off": "<span color='#e57474'></span>  Turned Off",
-    	"format-disabled": "<span color='#e57474'></span>  Disabled",
-    	"format-connected": "<span color='#e57474'></span> Connected",
-    	"format": "<span color='#e57474'></span> Disabled",
-    	"on-click":"blueman-manager &"
+        "tooltip": true,
+        "tooltip-format": "{artist} - {album} - {title} - Total Time : {totalTime:%M:%S}",
+        "format": "{elapsedTime:%M:%S}",
+        "format-paused": " {title}",
+        "format-disconnected": "Disconnected",
+        "format-stopped": "Not Playing",
+        "on-click": "mpc --quiet toggle",
+        "on-click-right": "mpc --quiet stop",
+        "state-icons": {
+            "playing": " ",
+            "paused": ""
+        }
     },
-
+    // Bluetooth
+    "bluetooth": {
+        "format-on": "<span color='#e57474'></span>  Turned On",
+        "format-off": "<span color='#e57474'></span>  Turned Off",
+        "format-disabled": "<span color='#e57474'></span>  Disabled",
+        "format-connected": "<span color='#e57474'></span> Connected",
+        "format": "<span color='#e57474'></span> Disabled",
+        "on-click": "blueman-manager &"
+    },
     // Other
     "user": {
         "format": "{user}",
         "interval": 60,
         "icon": false,
     },
-    
     // Idle Inhibator
     "idle_inhibitor": {
         "format": "{icon}",
         "tooltip": true,
-        "format-icons":{
+        "format-icons": {
             "activated": "",
             "deactivated": ""
         },
-        "on-click-right": "hyprlock"        
+        "on-click-right": "hyprlock"
     },
-
     // Notification
     "custom/notification": {
-        "format":"",
+        "format": "  ",
         "on-click": "sleep 0.1 && swaync-client -rs && swaync-client -t"
     },
-
     "custom/swap": {
-    	"on-click": "~/.config/waybar/scripts/swap.sh",
-    	"tooltip": "Swap between waybar configs",
-    	"format": "Bg  "
-     },
-     "custom/cava-internal": {
-    	"exec": "sh ~/.config/waybar/scripts/Cava.sh",
-    	"format": "{}",
-    	"tooltip": false,
-    	"on-click": "swaymsg reload & pkill waybar & waybar",
-    	"layer": "below",
-    	"output": "all"
-     }
-
+        "on-click": "~/.config/waybar/scripts/swap.sh",
+        "tooltip": "Swap between waybar configs",
+        "format": "Bg  "
+    },
+    "custom/cava-internal": {
+        "exec": "sh ~/.config/waybar/scripts/Cava.sh",
+        "format": "{}",
+        "tooltip": false,
+        "on-click": "swaymsg reload & pkill waybar & waybar",
+        "layer": "below",
+        "output": "all"
+    }
 }

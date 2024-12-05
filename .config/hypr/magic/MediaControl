@@ -1,16 +1,90 @@
 #!/usr/bin/env bash
 
-	case $1 in 
-		--next)
-			mpc -q next
+# Import Current Theme
+DIR="$HOME/.config/hypr"
+RASI="$DIR/assets/themes/music.rasi"
+
+# Theme Elements
+status="`playerctl status`"
+if [[ -z "$status" ]]; then
+	prompt='Offline'
+	mesg="No players found"
+else
+	prompt="`playerctl metadata xesam:title`"
+	mesg="`playerctl metadata mpris:trackid`"
+fi
+
+# Rofi CMD
+rofi_cmd() {
+	rofi -dmenu \
+		-p "$prompt" \
+		-mesg "$mesg" \
+		${active} ${urgent} \
+		-markup-rows \
+		-theme ${RASI}
+}
+
+if [[ ${status} == "Playing" ]]; then
+		option_1=""
+	else
+		option_1=""
+	fi
+	option_2=""
+	option_3=""
+	option_4=""
+	option_5=""
+	option_6=""
+
+# Pass variables to rofi dmenu
+run_rofi() {
+	echo -e "$option_1\n$option_2\n$option_3\n$option_4" | rofi_cmd
+}
+
+# Execute Command
+iDIR="$HOME/.config/hypr/assets/icons"
+notify_song="notify-send -h string:x-canonical-private-synchronous:sys-notify-song -u low -i ${iDIR}/music.png"
+
+# Actions
+run_cmd(){
+	chosen="$(run_rofi)"
+	case ${chosen} in
+		$option_1)
+			playerctl play-pause && ${notify_song} "`playerctl metadata xesam:title`"
 			;;
-		--previous)
-			mpc -q prev
+		$option_2)
+			playerctl stop
 			;;
-		--toggle)
-			mpc -q toggle
+		$option_3)
+			playerctl previous && ${notify_song} "`playerctl metadata xesam:title`"
 			;;
-		--stop)
-			mpc -q stop
+		$option_4)
+			playerctl next && ${notify_song} "`playerctl metadata xesam:title`"
 			;;
-esac 2>/dev/null
+		$option_5)
+			playerctl loop
+			;;
+		$option_6)
+			playerctl shuffle
+			;;
+	esac &>/dev/null
+}
+
+
+
+case $1 in 
+	--next)
+		mpc -q next
+	;;
+	--previous)
+		mpc -q prev
+	;;
+	--toggle)
+		mpc -q toggle
+	;;
+	--stop)
+		mpc -q stop
+	;;
+	--rofi)
+		run_cmd
+	;;
+esac &>/dev/null
