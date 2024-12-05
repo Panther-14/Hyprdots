@@ -17,7 +17,6 @@
     "margin-left": 0,
     "margin-right": 0,
     "spacing": 0,
-
     // Position TOP
     "layer": "top",
     "margin-bottom": 2,
@@ -28,58 +27,49 @@
     // "position": "bottom",
     // "margin-top": 0,
     // "margin-bottom": 14,
-
     "layer": "top",
     "margin-left": 15,
     "margin-right": 15,
     "spacing": 0,
-
-
     // Load Modules
     "include": [
         ".config/waybar/modules.json",
     ],
-
     // Modules Left
     "modules-left": [
-      "hyprland/workspaces",
-      "hyprland/window",
-      "custom/cava-internal",
-      "mpd"
-    
-
-      // "custom/appmenu",
-      //"custom/settings",
-      // "custom/waybarthemes",
-      //  "group/quicklinks",
-      //  "custom/starter"
+        "hyprland/workspaces",
+        "hyprland/window"
+        // "custom/appmenu",
+        //"custom/settings",
+        // "custom/waybarthemes",
+        //  "group/quicklinks",
+        //  "custom/starter"
     ],
-
     // Modules Center
     "modules-center": [
-     "clock",
-     "custom/notification"
+        "clock",
+        "custom/notification"
     ],
-
     // Modules Right    
     "modules-right": [
-	"backlight",
-	"temperature",
+        "custom/cava-internal",
+        "mpd",
         "pulseaudio",
-        "memory",
         "cpu",
         "battery",
         "tray",
         "custom/exit"
-
-    //  "custom/waybar-media",
-    //  "custom/playerprevious",
-    //  "custom/playerpause",
-    //  "custom/playernext",
-    //  "bluetooth",
-    //  "network",
-    //  "group/hardware",
-    //  "custom/wallpaper",
-    //  "custom/ml4w-welcome",
+        //	"backlight",
+        //  "temperature",
+        //  "memory",
+        //  "custom/waybar-media",
+        //  "custom/playerprevious",
+        //  "custom/playerpause",
+        //  "custom/playernext",
+        //  "bluetooth",
+        //  "network",
+        //  "group/hardware",
+        //  "custom/wallpaper",
+        //  "custom/ml4w-welcome",
     ]
 }
