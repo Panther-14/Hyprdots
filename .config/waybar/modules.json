@@ -40,7 +40,9 @@
             "default": ""
         },
         "persistent-workspaces": {
-            "*": 5
+            //"*": 5
+            "eDP-1": 5,
+            "HDMI-A-1":1
         }
     },
     // Hyprland Window
@@ -250,14 +252,14 @@
     "mpd": {
         "tooltip": true,
         "tooltip-format": "{artist} - {album} - {title} - Total Time : {totalTime:%M:%S}",
-        "format": "{elapsedTime:%M:%S}",
-        "format-paused": " {title}",
-        "format-disconnected": "Disconnected",
-        "format-stopped": "Not Playing",
+        "format": " {stateIcon} {elapsedTime:%M:%S}",
+        "format-paused": " {stateIcon} {elapsedTime:%M:%S}",
+        "format-disconnected": " Disconnected",
+        "format-stopped": " Not Playing",
         "on-click": "mpc --quiet toggle",
         "on-click-right": "mpc --quiet stop",
         "state-icons": {
-            "playing": " ",
+            "playing": "",
             "paused": ""
         }
     },
@@ -300,7 +302,7 @@
         "exec": "sh ~/.config/waybar/scripts/Cava.sh",
         "format": "{}",
         "tooltip": false,
-        "on-click": "swaymsg reload & pkill waybar & waybar",
+        "on-click": "",
         "layer": "below",
         "output": "all"
     }

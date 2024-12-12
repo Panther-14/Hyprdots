@@ -28,6 +28,8 @@
     // "margin-top": 0,
     // "margin-bottom": 14,
     "layer": "top",
+    "output": "eDP-1",
+    //"output":["eDP-1","HDMI-A-1"],
     "margin-left": 15,
     "margin-right": 15,
     "spacing": 0,
@@ -39,6 +41,7 @@
     "modules-left": [
         "hyprland/workspaces",
         "hyprland/window"
+        //"custom/cava-internal"
         // "custom/appmenu",
         //"custom/settings",
         // "custom/waybarthemes",
