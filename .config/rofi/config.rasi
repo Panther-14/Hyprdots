@@ -14,7 +14,7 @@ configuration {
 /*	run-shell-command: "{terminal} -e {cmd}";*/
 /*	window-command: "wmctrl -i -R {window}";*/
 /*	window-match-fields: "all";*/
-	icon-theme: "Tokyonight-Dark";
+    icon-theme: "One UI";
 /*	drun-match-fields: "name,generic,exec,categories,keywords";*/
 /*	drun-categories: ;*/
 /*	drun-show-actions: false;*/
@@ -52,7 +52,7 @@ configuration {
 /*	drun-reload-desktop-cache: false;*/
 /*	normalize-match: false;*/
 /*	steal-focus: false;*/
-/*	application-fallback-icon: ;*/
+    application-fallback-icon: "Adwaita";
 /*	refilter-timeout-limit: 8192;*/
 /*	xserver-i300-workaround: false;*/
 /*	pid: "/run/user/1000/rofi.pid";*/
