@@ -5,8 +5,10 @@ notify_song="notify-send -h string:x-canonical-private-synchronous:sys-notify-so
 
 mesg="`mpc -f "%title% - %artist%" current`"
 
-choosen="$(mpc playlist -f %title% | rofi -theme ~/.config/hypr/assets/themes/music_playlist.rasi -p "Music" -mesg "$mesg" -dmenu -i -selected-row 0 -show-icons false)"
+choosen="$(mpc -f "%title% - %artist%" playlist | grep -v '^$' | rofi -theme ~/.config/hypr/assets/themes/music_playlist.rasi -p "Music" -mesg "$mesg" -dmenu -i -selected-row 0 -show-icons false)"
+
 
 if [[ -n $choosen ]]; then
-  mpc searchplay "$choosen" && ${notify_song} "`mpc -f "%title%\n%artist%" current`"
+  choose=$(echo $choosen | awk -F ' - ' '{print "title " "\"" $1 "\"","artist " "\"" $2 "\""}')
+  echo mpc searchplay $choose | bash && ${notify_song} "`mpc -f "%title%\n%artist%" current`"
 fi

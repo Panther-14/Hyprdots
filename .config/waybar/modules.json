@@ -105,7 +105,7 @@
     },
     // CPU
     "cpu": {
-        "format": "CPU {usage}%   ",
+        "format": " 󰻠 {usage}%   ",
         "on-click": "kitty -e btop"
     },
     // Memory
@@ -177,7 +177,7 @@
     // Battery
     "battery": {
         "states": {
-            // "good": 95,
+            "good": 95,
             "warning": 30,
             "critical": 15
         },
