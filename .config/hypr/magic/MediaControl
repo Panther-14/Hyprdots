@@ -73,13 +73,13 @@ run_cmd(){
 
 case $1 in 
 	--next)
-		mpc -q next
+		mpc -q next && ${notify_song} "`mpc -f "%title%\n%artist%" current`"
 	;;
 	--previous)
-		mpc -q prev
+		mpc -q prev && ${notify_song} "`mpc -f "%title%\n%artist%" current`"
 	;;
 	--toggle)
-		mpc -q toggle
+		mpc -q toggle && ${notify_song} "`mpc -f "%title%\n%artist%" current`"
 	;;
 	--stop)
 		mpc -q stop
