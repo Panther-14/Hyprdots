@@ -1,0 +1,53 @@
+// __        __          _                 
+// \ \      / /_ _ _   _| |__   __ _ _ __  
+//  \ \ /\ / / _` | | | | '_ \ / _` | '__| 
+//   \ V  V / (_| | |_| | |_) | (_| | |    
+//    \_/\_/ \__,_|\__, |_.__/ \__,_|_|    
+//                 |___/                   
+//  
+// by Stephan Raabe (2023) 
+// Edited by Pilk (2024) :3c
+// Edited by Panther (Github)
+// ----------------------------------------------------- 
+//
+{
+    // General Settings
+    // Position BOTTOM
+    "position": "bottom",
+    "margin-top": 0,
+    "margin-bottom": 10,
+    "margin-left": 10,
+    "margin-right": 10,
+    "output": "eDP-1",
+    "spacing": 0,
+    //"output":["eDP-1","HDMI-A-1"],
+    // Load Modules
+    "include": [
+        "~/.config/waybar/modules"
+    ],
+    // Modules Left
+    "modules-left": [
+        "hyprland/workspaces",
+        "hyprland/window"
+    ],
+    // Modules Center
+    "modules-center": [
+        "clock",
+        "custom/notification"
+    ],
+    // Modules Right    
+    "modules-right": [
+        "custom/cava-internal",
+        "mpd",
+        "pulseaudio",
+        "cpu",
+        "battery",
+        "tray",
+        "custom/exit"
+        //	"backlight",
+        //  "temperature",
+        //  "memory",
+        //  "bluetooth",
+        //  "network",
+    ]
+}

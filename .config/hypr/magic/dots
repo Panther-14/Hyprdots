@@ -1,0 +1,154 @@
+#!/usr/bin/bash
+
+set -e
+
+iDIR="$HOME/.config/hypr/assets/icons"
+
+RED="\e[31m"
+GREEN="\e[32m"
+BLUE="\e[34m"
+ENDCOLOR="\e[0m"
+
+# Notify
+notify_dots(){
+	notify-send -h string:x-canonical-private-synchronous:sys-notify-dotfiles -u low -i "${iDIR}/palette.png" --app-name="DotFiles" "Dotfiles" "$@"
+}
+
+dot(){
+    git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME "$@"
+}
+
+# Init bare repository
+init(){
+    if [ ! -f "$HOME/.dotfiles" ]; then
+        echo -e "\n${RED}>> Creating directory...\n${ENDCOLOR}"
+        mkdir $HOME/.dotfiles
+    fi
+    echo -e "\n${RED}>> Initialazing bare repository...\n${ENDCOLOR}"
+    git init --bare $HOME/.dotfiles
+}
+
+config(){
+    local url=""
+    local email=""
+    local user=""
+    echo -e "\n${RED}>> Configuring origin, username and email...\n${ENDCOLOR}"
+
+    # read -p "Enter origin: " url
+    dot remote add origin $url
+
+    # read -p "Enter your username: " user
+    dot config --local user.name "$user"
+    
+    # read -p "Enter your email: " email
+    dot config --local user.email "$email"
+    
+    dot config --local status.showUntrackedFiles no
+    dot branch -M master main
+}
+
+status_command(){
+    echo -e "\n${GREEN}>> Dots status...\n${ENDCOLOR}"
+    notify_dots ">> Pushing to repo..."
+    dot status
+}
+
+add_Files(){
+    echo -e "\n${BLUE}>> Adding Files... \n${ENDCOLOR}"
+
+    dot add .config/btop/
+    dot add .config/cava/
+    dot add .config/fastfetch/
+    dot add .config/htop/
+    dot add .config/hypr/
+    dot add .config/kitty/
+    dot add .config/neofetch/
+    dot add .config/ranger/
+    dot add .config/rofi/
+    dot add .config/swaync/
+    dot add .config/waybar/
+    dot add .config/waypaper/
+    dot add .config/wlogout/
+    dot add .config/wallpaper.conf
+    dot add .local/bin/
+    dot add .mpd/
+    dot add .panther/
+    dot add .p10k.zsh
+    dot add .zshrc
+    #dot add .wallpaper/
+}
+
+first_push(){
+    echo -e "\n${BLUE}>> Pushing to repo...\n${ENDCOLOR}"
+
+    commitmessage=$(echo "$(date) - No message.")
+
+    echo -e "\n${BLUE}>> Dots commit with message: \"$commitmessage\" \n${ENDCOLOR}"
+
+    dot commit -m "$commitmessage"
+
+    dot push origin main
+}
+
+push_Files(){
+    echo -e "\n${BLUE}>> Pushing to repo...\n${ENDCOLOR}"
+
+    commitmessage=$(! [ -z $1 ] && echo "$1" || echo "$(date) - No message.")
+
+    echo -e "\n${BLUE}>> Dots commit with message: \"$commitmessage\" \n${ENDCOLOR}"
+
+    dot commit -m "$commitmessage"
+
+    dot push origin main
+}
+
+backup_dots(){
+    notify_dots ">> Starting backup..."
+    init
+    config
+    status_command
+    add_Files
+    first_push
+    notify_dots ">> Backup finished..."
+}
+
+auto_push(){
+    if [[ -n "$(dot status -s)" ]];
+    then
+        add_Files
+        notify_dots ">> Pushing to repo..."
+        push_Files
+        notify_dots ">> Push finished..."
+    else 
+        notify_dots ">> Nothing to push..."
+    fi
+}
+
+help_command(){
+    echo -e "Usage"
+}
+
+case "$1" in
+    --init|-i|init|i)
+        init
+    ;;
+    --config|-c|config|c)
+        config
+    ;;
+    --push|-p|push|p)
+        add_Files
+        push_Files $2
+    ;;
+    --status|-s|status|s)
+        status_command
+    ;;
+    --backup|-b|backup|b)
+        backup_dots
+    ;;
+    --auto|-a|auto|a)
+        auto_push
+    ;;
+    --help|help|*)
+        help_command
+    ;;
+esac
