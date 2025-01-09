@@ -1,0 +1,148 @@
+/**/
+
+configuration {
+    font:                       "Hack Mono Nerd Font 10";
+}
+
+/* config and colors ------------------------------ */
+@import "../shared/colors.rasi"
+
+/* Window ----------------------------------------- */
+window {
+    location:                   center;
+    anchor:                     center;
+    border:                     1px;
+    border-radius:              30px;
+
+    width:                      55%;
+    background-color:            @background;
+}
+
+/* Main Box ---------------------------------------- */
+mainbox {
+    children:                   ["listbox"];
+    orientation:                vertical;
+    background-color:           transparent;
+
+    spacing:                    24px;
+}
+
+/* Listbox ------------------------------------------ */
+listbox {
+    spacing:                     20px;
+    background-color:            transparent;
+    orientation:                 vertical;
+    children:                    [ "inputbar", "listview", "message" ];
+}
+
+/* Listview ---------------------------------------- */
+listview {
+    columns:                     2;
+    lines:                       6;
+    cycle:                       true;
+    dynamic:                     true;
+    scrollbar:                   false;
+    layout:                      vertical;
+    reverse:                     false;
+    fixed-height:                true;
+    fixed-columns:               true;
+    padding:                     15px;
+    spacing:                     16px;
+    background-color:            @background;
+}
+
+/* Image ----------------------------------------------- */
+img {
+    padding:                    164px 128px;
+    border-radius:              24px;
+    background-image:           url("~/.wallpaper/wall-01.jpg", height);
+}
+
+/* Inputbar --------------------------------------------- */
+inputbar {
+    children:                    [ "textbox-icon", "entry" ];
+
+    border-radius:               12px;
+    background-color:            @background;
+    text-color:                  white;
+
+    spacing:                     0px;
+    margin:                      0px;
+    padding:                     54px;
+    
+    background-image: url("~/.panther/background.png", width);
+}
+
+textbox-icon {
+    expand:                      false;
+    background-color:            transparent;
+    text-color:                  inherit;
+    str: "  ";
+}
+
+/* Entry ----------------------------------------------- */
+entry {
+    cursor:                     text;
+    expand:                     false;
+    placeholder-color:          inherit;
+    placeholder:                "Select a song to play";
+
+    background-color:           transparent;
+    text-color:                 inherit;
+}
+
+/* ---- Elements ---- */
+element {
+    children:                   ["element-text"];
+    cursor:                     pointer;
+    background-color:           @background;
+    border-radius:              10px;
+    padding:                    12px;
+}
+
+element-text {
+    background-color:            transparent;
+    text-color:                  inherit;
+    cursor:                      inherit;
+    vertical-align:              0.5;
+    horizontal-align:            0.0;
+}
+
+element normal.normal,
+element alternate.normal {
+    background-color:            var(background-alt);
+    text-color:                  var(foreground);
+}
+element normal.urgent,
+element alternate.urgent,
+element selected.active {
+    background-color:            var(urgent);
+    text-color:                  var(background);
+}
+element normal.active,
+element alternate.active,
+element selected.urgent {
+    background-color:            var(active);
+    text-color:                  var(background);
+}
+element selected.normal {
+    background-color:            var(selected);
+    text-color:                  var(background);
+}
+
+message {
+    enabled:                     true;
+    margin:                      0px;
+    padding:                     10px;
+    border:                      0px solid;
+    border-radius:               10px;
+    border-color:                @selected;
+    background-color:            @background-alt;
+    text-color:                  @foreground;
+}
+textbox {
+    background-color:            inherit;
+    text-color:                  inherit;
+    vertical-align:              0.5;
+    horizontal-align:            0.5;
+}

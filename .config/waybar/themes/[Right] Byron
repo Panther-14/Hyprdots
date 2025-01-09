@@ -1,0 +1,29 @@
+{
+    "include": "~/.config/waybar/modules",
+    "layer": "top",
+    "position": "right",
+    "height": 650,
+    "margin-top": 8,
+    "margin-bottom": 1,
+    "margin-left": 3,
+    "margin-right": 3,
+    "spacing": 1,
+    "fixed-center": true,
+    "ipc": true,
+    
+    "modules-left": [
+        "custom/exit",
+        "idle_inhibitor",
+        "hyprland/workspaces#kanji"
+    ],
+        
+    "modules-center": [
+        "clock#vertical"
+    ],
+
+    "modules-right": [
+        "mpris",
+        "tray",
+        "custom/swaync"
+    ]  
+}

@@ -1,0 +1,67 @@
+#!/bin/bash
+
+# Directory for icons
+iDIR="$HOME/.config/hypr/assets/icons/"
+
+# Note: You can add more options below with the following format:
+# ["TITLE"]="link"
+
+# Define menu options as an associative array
+declare -A menu_options=(
+  ["Whatsapp"]="https://web.whatsapp.com/"
+  ["Discord"]="https://discord.com/channels/@me"
+  ["Messages"]="https://web.telegram.org/"
+  ["Youtube"]="https://www.youtube.com/"
+  ["Youtube Music"]="https://music.youtube.com/"
+  ["Spotify"]="https://open.spotify.com/"
+  ["Soundcloud"]="https://soundcloud.com/discover"
+  ["Google Meet"]="https://meet.google.com/"
+  ["Zoom"]="https://zoom.us/"
+  ["Skype"]="https://web.skype.com/"
+  ["Microsoft Teams"]="https://teams.microsoft.com/"
+  ["Outlook"]="https://outlook.live.com/"
+  ["Google Drive"]="https://drive.google.com/"
+  ["OneDrive"]="https://onedrive.live.com/"
+  ["Notion"]="https://www.notion.so/"
+)
+
+# Main function
+main() {
+  choice=$(printf "%s\n" "${!menu_options[@]}" | rofi -dmenu -theme-str 'entry {placeholder: "Select an app to launch";}' -config ~/.config/hypr/assets/themes/items_list.rasi -i -p "")
+
+  if [ -z "$choice" ]; then
+    exit 1
+  fi
+
+  link="${menu_options[$choice]}"
+
+  
+  # Check if the link is a playlist
+  brave --app="$link"
+}
+
+
+# Comando de ayuda
+help_command(){
+  echo -e "Uso WallpaperManager [opcion]
+  Opciones:
+  --help: Muestra esta pagina de ayuda\n"
+}
+
+case "$1" in
+  --exec=*)
+    app=$(echo "$1" | cut -d'=' -f2 | xargs)
+    brave --app="${menu_options[$app]}"
+  ;;
+  --options)
+    printf "%s\n" "${!menu_options[@]}"
+  ;;
+  --help)
+    help_command
+  ;;
+  --rofi|*)
+    main
+  ;;
+esac
+
+exit 0
