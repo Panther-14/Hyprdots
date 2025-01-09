@@ -2,7 +2,7 @@
 
 # Import Current Theme
 DIR="$HOME/.config/hypr"
-RASI="$DIR/assets/themes/music.rasi"
+RASI="$DIR/assets/themes/applets.rasi"
 
 # Theme Elements
 status="`playerctl status`"
@@ -10,8 +10,8 @@ if [[ -z "$status" ]]; then
 	prompt='Offline'
 	mesg="No players found"
 else
-	prompt="`playerctl metadata xesam:title`"
-	mesg="`playerctl metadata mpris:trackid`"
+	prompt="`playerctl metadata xesam:artist`"
+	mesg="`playerctl metadata xesam:title`"
 fi
 
 # Rofi CMD
@@ -25,66 +25,124 @@ rofi_cmd() {
 }
 
 if [[ ${status} == "Playing" ]]; then
-		option_1=""
-	else
-		option_1=""
+	option_1=""
+else
+	option_1=""
 	fi
-	option_2=""
-	option_3=""
-	option_4=""
-	option_5=""
-	option_6=""
+option_2=""
+option_3=""
+option_4=""
+option_5=""
+option_6=""
+
+# Toggle Actions
+active=''
+urgent=''
+
+loop_status=`playerctl loop`
+shuffle_status=`playerctl shuffle`
+# Repeat
+if [[ ${loop_status} == *"Playlist"* || ${loop_status} == *"Track"* ]]; then
+    active="-a 4"
+elif [[ ${loop_status} == *"None"* ]]; then
+    urgent="-u 4"
+else
+    option_5=""
+fi
+
+# Random
+if [[ ${shuffle_status} == *"On"* ]]; then
+    [ -n "$active" ] && active+=",5" || active="-a 5"
+elif [[ ${shuffle_status} == *"Off"* ]]; then
+    [ -n "$urgent" ] && urgent+=",5" || urgent="-u 5"
+else
+    option_6=""
+fi
+
+# Help
+help_command(){
+  echo -e "Uso MediaControl [opcion]
+  Opciones:
+  --next: Reproduce la siguiente canción\n
+  --previous: Reproduce la canción anterior\n
+  --toggle: Alterna entre play y pause\n
+  --stop: Detiene la reproducción\n
+  --loop: Alterna entre repetir o no la playlist\n
+  --shuffle: Mezcla la playlist (Modo aleatorio)\n
+  --help: Muestra esta pagina de ayuda\n"
+}
 
 # Pass variables to rofi dmenu
 run_rofi() {
-	echo -e "$option_1\n$option_2\n$option_3\n$option_4" | rofi_cmd
+	echo -e "$option_1\n$option_2\n$option_3\n$option_4\n$option_5\n$option_6" | rofi_cmd
 }
 
 # Execute Command
 iDIR="$HOME/.config/hypr/assets/icons"
-notify_song="notify-send -h string:x-canonical-private-synchronous:sys-notify-song -u low -i ${iDIR}/music.png"
+notify_song="notify-send -h string:x-canonical-private-synchronous:sys-notify-song -u low -i ${iDIR}/music.png --app-name="Media" "Media""
 
 # Actions
 run_cmd(){
 	chosen="$(run_rofi)"
 	case ${chosen} in
 		$option_1)
-			playerctl play-pause && ${notify_song} "`playerctl metadata xesam:title`"
+			playerctl play-pause && ${notify_song} "<b>`playerctl metadata xesam:title`\n`playerctl metadata xesam:artist`</b>"
 			;;
 		$option_2)
-			playerctl stop
+			playerctl stop && ${notify_song} "Stopped"
 			;;
 		$option_3)
-			playerctl previous && ${notify_song} "`playerctl metadata xesam:title`"
+			playerctl previous && ${notify_song} "<b>`playerctl metadata xesam:title`\n`playerctl metadata xesam:artist`</b>"
 			;;
 		$option_4)
-			playerctl next && ${notify_song} "`playerctl metadata xesam:title`"
+			playerctl next && ${notify_song} "<b>`playerctl metadata xesam:title`\n`playerctl metadata xesam:artist`</b>"
 			;;
 		$option_5)
-			playerctl loop
+			if [[ ${loop_status} == *"Playlist"* || ${loop_status} == *"Track"* ]]; then
+				playerctl loop none && ${notify_song} "Loop Off"
+			elif [[ ${loop_status} == *"None"* ]]; then
+				playerctl loop playlist && ${notify_song} "Loop On"
+			fi
 			;;
 		$option_6)
-			playerctl shuffle
+			playerctl shuffle toggle && ${notify_song} "Shuffle `playerctl shuffle`"
 			;;
 	esac &>/dev/null
 }
 
-
-
 case $1 in 
 	--next)
-		mpc -q next && ${notify_song} "`mpc -f "%title%\n%artist%" current`"
+		playerctl next && ${notify_song} "<b>`playerctl metadata xesam:title`\n`playerctl metadata xesam:artist`</b>"
 	;;
 	--previous)
-		mpc -q prev && ${notify_song} "`mpc -f "%title%\n%artist%" current`"
+		playerctl previous && ${notify_song} "<b>`playerctl metadata xesam:title`\n`playerctl metadata xesam:artist`</b>"
 	;;
 	--toggle)
-		mpc -q toggle && ${notify_song} "`mpc -f "%title%\n%artist%" current`"
+		playerctl play-pause && ${notify_song} "<b>`playerctl metadata xesam:title`\n`playerctl metadata xesam:artist`</b>"
+	;;
+	--play)
+		playerctl play && ${notify_song} "<b>`playerctl metadata xesam:title`\n`playerctl metadata xesam:artist`</b>"
+	;;
+	--pause)
+		playerctl pause && ${notify_song} "<b>`playerctl metadata xesam:title`\n`playerctl metadata xesam:artist`</b>"
 	;;
 	--stop)
-		mpc -q stop
+		playerctl stop && ${notify_song} "Stopped"
 	;;
-	--rofi)
+	--loop)
+		if [[ ${loop_status} == *"Playlist"* || ${loop_status} == *"Track"* ]]; then
+			playerctl loop none && ${notify_song} "Loop Off"
+		elif [[ ${loop_status} == *"None"* ]]; then
+			playerctl loop playlist && ${notify_song} "Loop On"
+		fi
+	;;
+	--shuffle)
+		playerctl shuffle toggle && ${notify_song} "Shuffle `playerctl shuffle`"
+	;;
+	--help)
+		help_command
+	;;
+	--rofi|*)
 		run_cmd
 	;;
 esac &>/dev/null

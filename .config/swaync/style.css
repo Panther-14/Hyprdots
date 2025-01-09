@@ -42,7 +42,7 @@
 @define-color bg2       #504945;
 
 * {
-    font-family: Iosevka Nerd Font;
+    font-family: Hack Nerd Font;
     /* font-weight: bolder; */
 }
 
@@ -75,12 +75,12 @@
     text-shadow: none;
     padding: 0;
     border-radius: 100%;
-    margin-top: 20px;
+    margin-top: 10px;
     margin-right: 13px;
     box-shadow: none;
     border: none;
-    min-width: 24px;
-    min-height: 24px
+    min-width: 14px;
+    min-height: 14px
 }
 
 .close-button:hover {
@@ -267,7 +267,7 @@
 
 .widget-title {
     color: @red;
-    margin: 20px 20px 5px 20px;
+    margin: 2px 2px 5px 2px;
     font-size: 10.5pt;
     font-weight: bold;
     font-style: italic;

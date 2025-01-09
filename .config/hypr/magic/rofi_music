@@ -2,10 +2,11 @@
 
 ## Copyright (C) 2020-2023 Aditya Shakya <adi1090x@gmail.com>
 ## Edited for Garuda Linux by yurihikari
+## Modified by Panther-14 (Github)
 
 # Import Current Theme
 DIR="$HOME/.config/hypr"
-RASI="$DIR/assets/themes/music.rasi"
+RASI="$DIR/assets/themes/applets.rasi"
 
 # Theme Elements
 status="`mpc status`"
@@ -80,44 +81,60 @@ run_rofi() {
 
 # Execute Command
 iDIR="$HOME/.config/hypr/assets/icons"
-notify_song="notify-send -h string:x-canonical-private-synchronous:sys-notify-song -u low -i ${iDIR}/music.png"
+notify_song="notify-send -h string:x-canonical-private-synchronous:sys-notify-song -u low -i ${iDIR}/music.png --app-name="Music" "Music""
 run_cmd() {
-	if [[ "$1" == '--opt1' ]]; then
-		mpc -q toggle && ${notify_song} "`mpc -f "%title%\n%artist%" current`"
-	elif [[ "$1" == '--opt2' ]]; then
-		mpc -q stop
-	elif [[ "$1" == '--opt3' ]]; then
-		mpc -q pause && mpc -q prev && mpc -q play 
-    ${notify_song} "`mpc -f "%title%\n%artist%" current`"
-	elif [[ "$1" == '--opt4' ]]; then
-		mpc -q pause && mpc -q next && mpc -q play 
-    ${notify_song} "`mpc -f "%title%\n%artist%" current`"
-	elif [[ "$1" == '--opt5' ]]; then
-		mpc -q repeat
-	elif [[ "$1" == '--opt6' ]]; then
-		mpc -q random
-	fi
+	# Actions
+	chosen="$(run_rofi)"
+	case ${chosen} in
+		$option_1)
+			mpc -q toggle && ${notify_song} "`mpc -f "%title%\n%artist%" current`"
+		;;
+		$option_2)
+			mpc -q stop && ${notify_song} "Stopped"
+		;;
+		$option_3)
+			mpc -q pause && mpc -q prev && mpc -q play
+			${notify_song} "`mpc -f "%title%\n%artist%" current`"
+		;;
+		$option_4)
+			mpc -q pause && mpc -q next && mpc -q play
+			${notify_song} "`mpc -f "%title%\n%artist%" current`"
+		;;
+		$option_5)
+			mpc -q repeat && ${notify_song} "Repeat"
+		;;
+		$option_6)
+			mpc -q random && ${notify_song} "Random"
+		;;
+	esac	
 }
 
-# Actions
-chosen="$(run_rofi)"
-case ${chosen} in
-    $option_1)
-		run_cmd --opt1
-        ;;
-    $option_2)
-		run_cmd --opt2
-        ;;
-    $option_3)
-		run_cmd --opt3
-        ;;
-    $option_4)
-		run_cmd --opt4
-        ;;
-    $option_5)
-		run_cmd --opt5
-        ;;
-    $option_6)
-		run_cmd --opt6
-        ;;
-esac
+case $1 in 
+	--next)
+		mpc -q next && ${notify_song} "`mpc -f "%title%\n%artist%" current`"
+	;;
+	--previous)
+		mpc -q prev && ${notify_song} "`mpc -f "%title%\n%artist%" current`"
+	;;
+	--toggle)
+		mpc -q toggle && ${notify_song} "`mpc -f "%title%\n%artist%" current`"
+	;;
+	--play)
+		mpc -q play && ${notify_song} "`mpc -f "%title%\n%artist%" current`"
+	;;
+	--pause)
+		mpc -q pause && ${notify_song} "`mpc -f "%title%\n%artist%" current`"
+	;;
+	--stop)
+		mpc -q stop && ${notify_song} "Stopped"
+	;;
+	--repeat)
+		mpc -q repeat && ${notify_song} "Repeat"
+	;;
+	--random)
+		mpc -q random && ${notify_song} "Random"
+	;;
+	--rofi|*)
+		run_cmd
+	;;
+esac &>/dev/null
