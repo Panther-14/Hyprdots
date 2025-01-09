@@ -1,11 +1,11 @@
 #!/usr/bin/bash
 
 iDIR="$HOME/.config/hypr/assets/icons"
-notify_song="notify-send -h string:x-canonical-private-synchronous:sys-notify-song -u low -i ${iDIR}/music.png"
+notify_song="notify-send -h string:x-canonical-private-synchronous:sys-notify-song -u low -i ${iDIR}/music.png --app-name="Music" "Music""
 
 mesg="`mpc -f "%title% - %artist%" current`"
 
-choosen="$(mpc -f "%title% - %artist%" playlist | grep -v '^$' | rofi -theme ~/.config/hypr/assets/themes/music_playlist.rasi -p "Music" -mesg "$mesg" -dmenu -i -selected-row 0 -show-icons false)"
+choosen="$(mpc -f "%title% - %artist%" playlist | grep -v '^$' | rofi -theme ~/.config/hypr/assets/themes/items_list.rasi -p "Music" -mesg "$mesg" -dmenu -i -selected-row 0 -show-icons false)"
 
 
 if [[ -n $choosen ]]; then

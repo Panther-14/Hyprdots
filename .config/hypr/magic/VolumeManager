@@ -1,47 +1,184 @@
 #!/bin/bash
 
-# Get Volume
-get_volume() {
-	pamixer --get-volume-human | sed 's/%//'
+# Import Current Theme
+DIR="$HOME/.config/hypr"
+RASI="$DIR/assets/themes/applets.rasi"
+
+scripts="$DIR/magic"
+
+iDIR="$HOME/.config/hypr/assets/icons"
+# Get icons
+get_icon() {
+    local current=$(pamixer --get-volume-human)
+    if [[ "${current%\%}" -le 30 ]]; then
+        echo "$iDIR/volume-low.png"
+        elif [[ "${current%\%}" -le 60 ]]; then
+        echo "$iDIR/volume-mid.png"
+        elif [[ "${current%\%}" -gt 60 ]]; then
+        echo "$iDIR/volume-high.png"
+    fi
 }
 
+# Get Volume
+get_volume() {
+    pamixer --get-volume-human | sed 's/%//'
+}
+
+# Notify
+notify_volume(){
+    notify-send -h string:x-canonical-private-synchronous:sys-notify-volume -h int:value:$(get_volume) -u low -i "$(get_icon)" --app-name="Volume" "Volumen $(get_volume)%"
+}
 # Increase Volume
 increase_volume() {
-  [[$(pamixer --get-mute) == true]] && pamixer -u
-	pamixer --allow-boost --set-limit 150 -i 5
+    $(pamixer --get-mute) == true && pamixer -u
+    pamixer --allow-boost --set-limit 150 -i $1
+    notify_volume
 }
 
 # Decrease Volume
 decrease_volume() {
-  [[$(pamixer --get-mute) == true]] && pamixer -u
-	pamixer --allow-boost --set-limit 150 -d 5
+    $(pamixer --get-mute) == true && pamixer -u
+    pamixer --allow-boost --set-limit 150 -d $1
+    notify_volume
+}
+
+# Toggle Mute
+toggle_mute() {
+    pamixer --toggle-mute
+    if [[ $(pamixer --get-mute) == false ]]; then
+        notify-send -e -h string:x-canonical-private-synchronous:sys-notify-volume -u low -i "$(get_icon)" --app-name="Volume" "Volume ON"
+    else
+        notify-send -e -h string:x-canonical-private-synchronous:sys-notify-volume -u low -i "$iDIR/volume-mute.png" --app-name="Volume" "Volume OFF"
+    fi
+}
+
+# Toggle Mic Mute
+toggle_mic_mute() {
+    pamixer --default-source --toggle-mute
+    if [[ $(pamixer --default-source --get-mute) == false ]]; then
+        notify-send -e -h string:x-canonical-private-synchronous:sys-notify-volume -u low -i "$iDIR/microphone.png" --app-name="Volume" "Microphone ON"
+    else
+        notify-send -e -h string:x-canonical-private-synchronous:sys-notify-volume -u low -i "$iDIR/microphone-mute.png" --app-name="Volume" "Microphone OFF"
+    fi
 }
 
 # Help
 help_command(){
-  echo -e "Uso VolumeManager [opcion]
-  Opciones:
-  --volume, -V: Muestra el volumen actual\n
-  --increase, -I: Aumenta el volumen\n
-  --decrease, -D: Disminuye el volumen\n
-  --toggle, -M: Alterna entre silenciado y sonido\n
-  --toggle-mic, -V: Alterna entre silenciado y sonido del microfono\n
-  --help: Muestra esta pagina de ayuda\n"
+    echo -e "Uso VolumeManager [opcion]
+	Opciones:
+	--volume, -V: Muestra el volumen actual\n
+	--increase, -I: Aumenta el volumen\n
+	--decrease, -D: Disminuye el volumen\n
+	--toggle, -M: Alterna entre silenciado y sonido\n
+	--toggle-mic, -V: Alterna entre silenciado y sonido del microfono\n
+    --help: Muestra esta pagina de ayuda\n"
+}
+
+
+# Volume Info
+mixer="`amixer info Master | grep 'Mixer name' | cut -d':' -f2 | tr -d \',' '`"
+speaker="`pamixer --get-volume-human`"
+mic="`pamixer --default-source --get-volume-human`"
+
+active=""
+urgent=""
+
+# Speaker Info
+pamixer --get-mute &>/dev/null
+if [[ "$?" == true ]]; then
+    active="-a 1"
+    stext='Unmute'
+    sicon=''
+else
+    urgent="-u 1"
+    stext='Mute'
+    sicon=''
+fi
+
+# Microphone Info
+pamixer --default-source --get-mute &>/dev/null
+if [[ "$?" == 0 ]]; then
+    [ -n "$active" ] && active+=",3" || active="-a 3"
+    mtext='Unmute'
+    micon=''
+else
+    [ -n "$urgent" ] && urgent+=",3" || urgent="-u 3"
+    mtext='Mute'
+    micon=''
+fi
+
+# Theme Elements
+prompt="S:$stext, M:$mtext"
+mesg="$mixer - Speaker: $speaker, Mic: $mic"
+
+list_col='5'
+list_row='1'
+win_width='670px'
+
+
+# Options
+option_1=""
+option_2="$sicon"
+option_3=""
+option_4="$micon"
+option_5=""
+
+# Rofi CMD
+rofi_cmd() {
+    rofi -theme-str "window {width: $win_width;}" \
+    -theme-str "listview {columns: $list_col; lines: $list_row;}" \
+    -theme-str 'textbox-prompt-colon {str: "";}' \
+    -dmenu \
+    -p "$prompt" \
+    -mesg "$mesg" \
+    ${active} ${urgent} \
+    -markup-rows \
+    -theme ${RASI}
+}
+
+# Pass variables to rofi dmenu
+run_rofi() {
+    echo -e "$option_1\n$option_2\n$option_3\n$option_4\n$option_5" | rofi_cmd
+}
+
+# Execute Command
+run_cmd() {
+    # Actions
+    chosen="$(run_rofi)"
+    case ${chosen} in
+        $option_1)
+            increase_volume 15
+        ;;
+        $option_2)
+            toggle_mute
+        ;;
+        $option_3)
+            decrease_volume 15
+        ;;
+        $option_4)
+            toggle_mic_mute
+        ;;
+        $option_5)
+            pavucontrol
+        ;;
+    esac
 }
 
 case "$1" in
-  --volume|-V) get_volume
-  ;;
-  --increase|-I) increase_volume
-  ;;
-  --decrease|-D) decrease_volume
-  ;;
-  --toggle|-M) pamixer --toggle-mute
-  ;;
-  --toggle-mic|-V) pamixer --default-source --toggle-mute
-  ;;
-  --help) help_command
-  ;;
-  *) echo "$(get_volume)%"
-  ;;
+    --volume|-V) get_volume
+    ;;
+    --increase|-I) increase_volume 5
+    ;;
+    --decrease|-D) decrease_volume 5
+    ;;
+    --toggle|-M) toggle_mute
+    ;;
+    --toggle-mic|-V) toggle_mic_mute
+    ;;
+    --help) help_command
+    ;;
+    --rofi|*) run_cmd
+    ;;
 esac
+
+exit 0

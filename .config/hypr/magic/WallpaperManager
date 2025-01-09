@@ -1,141 +1,88 @@
 #!/bin/bash
 
-# Ruta al archivo de configuración
+# Config File Path
 CONFIG_FILE="$HOME/.config/wallpaper.conf"
-IMG="$HOME/.config/bspwm/assets/a.png"
+current_wp="$HOME/.panther"
 
-# Comprueba si el archivo de configuración existe
-if [ ! -f "$CONFIG_FILE" ]; then
-  notify-send -u normal -i $IMG -a WallpaperManager -t 1000 "El archivo de configuración wallpaper.conf no existe."
-  exit 1
-fi
+# Wallpapers Folder
+wallpaperFolder="~/.wallpaper"
+videoWallpaperFolder="~/Vídeos/wallpaper"
 
 # Lee el modo y la ruta del archivo desde el archivo de configuración
-MODO=$(grep '^modo=' "$CONFIG_FILE" | cut -d'=' -f2)
 RUTA=$(grep '^ruta=' "$CONFIG_FILE" | cut -d'=' -f2)
+BACKEND=$(grep '^backend=' "$CONFIG_FILE" | cut -d'=' -f2)
 
-export MODO
-
-# Función para aplicar un fondo de pantalla animado
-aplicar_animado() {
-  # Llama a tu script de fondo de pantalla animado aquí
-  # Por ejemplo:
-  # /ruta/a/tu/script_fondo_animado.sh
-  notify-send -u normal -i $IMG -a WallpaperManager -t 1000 "Not Implemented yet"
-}
-
-# Función para aplicar un fondo de pantalla estatico
-aplicar_estatico() {
-  feh --no-fehbg --bg-fill $RUTA &
-}
-
-# Función para aplicar un fondo de pantalla aleatorio
-aplicar_aleatorio() {
-  feh -z --no-fehbg --bg-fill $HOME/.config/bspwm/rices/$RICE_THEME/walls &
-}
-
-function get_icons(){
-  case "$1" in
-    "") echo "Estatico"
+backend_checker(){
+  case "$BACKEND" in
+    "swww")
+      set_colors "$1"
     ;;
-    "") echo "Aleatorio"
-    ;;
-    "󰤺") echo "Animado"
+    "mpvpaper")
     ;;
   esac
 }
-#
-# Mode Switcher
-#
-estatico="Estatico"
-animado="Animado"
-aleatorio="Aleatorio"
 
-options="\n\n󰤺"
-# Función para mostrar el menú de selección de modo
-select_mode() {
-  rofi_command="rofi -theme $HOME/.config/bspwm/assets/themes/wallpaperMode.rasi"
-  mode=$(echo -e $options | $rofi_command -p "Modo Actual: $MODO" -dmenu -selected-row 0)
+set_colors(){
+  
+  current_wallpaper="$1" #$(echo "$1" | cut -d'=' -f2 | xargs)
+  
+  # wal -q -i $current_wallpaper
+  
+  sed -i "s|^ruta=.*|ruta=$current_wallpaper|" "$CONFIG_FILE"
+  
+  # ln -sf "$current_wallpaper" "$HOME/.panther/background.png"
 
-  if [ -n "$mode" ]; then
-    MODO=$(get_icons $mode)
-    set_wallpaper
-    # Actualiza el modo en el archivo de configuración
-    sed -i "s/^modo=.*/modo=$MODO/" "$CONFIG_FILE"
+  rm -f $current_wp/background.png $current_wp/background-blured.png
+  
+  magick $current_wallpaper -resize 1366x768\! $current_wp/background.png
+  magick $current_wallpaper -resize 1366x768\! -blur 10x10 $current_wp/background-blured.png
+}
+##############################################################
+
+kill_mpvpaper(){
+  if [[ -n  `pgrep mpvpaper` ]]; then
+    killall mpvpaper
   fi
 }
 
-# Función para llamar al selector de fondos
-wallpaper_switcher(){
-  case "$MODO" in
-    $aleatorio)
-      aplicar_aleatorio
-    ;;
-    $estatico)
-      WallpaperSwitcher --fancy
-    ;;
-    $animado)
-      notify-send -u normal -i $IMG -a WallpaperManager -t 1000 "Not Implemented yet"
-    ;;
-    *)
-    ;;
-  esac
-}
-
-# Aplica el fondo de pantalla en función del modo
-set_wallpaper(){
-  case "$MODO" in
-    $estatico)
-      aplicar_estatico
-      ;;
-    $aleatorio)
-      aplicar_aleatorio
-      ;;
-    $animado)
-      aplicar_animado
-      ;;
-    *)
-      notify-send -u normal -i $IMG -a WallpaperManager -t 1000 "Modo no válido en el archivo de configuración: $MODO"
-      exit 1
-      ;;
-  esac
-}
-
-# Comando estado
-status_command(){
-  echo -e "Estado del Wallpaper
-  Modo actual: $MODO
-  Wallpaper: $RUTA"
-}
-
-# Comando de ayuda
 help_command(){
   echo -e "Uso WallpaperManager [opcion]
   Opciones:
-  --selector: Despliega el selector de modo\n
-  --update: Actualiza el fondo de acuerdo al modo\n
-  --init: Inicia el fondo de acuerdo al modo\n
-  --status: Muestra el estado actual del fondo\n
-  --help: Muestra esta pagina de ayuda\n"
+  --video, -V: Abre el selector de wallpaper animados\n
+  --static, -S: Abre el selector de wallpaper staticos\n
+  --random, -R: Establece un wallpaper aleatorio\n
+  --random-video, -A: Establece un wallpaper animado aleatorio\n
+  --help, -H: Muestra esta pagina de ayuda\n"
 }
 
-# Modos del script
-case "$1" in
-  --selector) 
-    select_mode
-  ;;
-  --update) 
-    wallpaper_switcher
-  ;;
-  --init)
-    set_wallpaper
-  ;;
-  --status)
-    status_command
-  ;;
-  --help | *)
-    help_command
-  ;;
-esac
+main(){
+  case "$1" in
+    --video|-V)
+      kill_mpvpaper
+      waypaper --backend mpvpaper --folder $videoWallpaperFolder
+      sed -i "s|^backend=.*|backend=mpvpaper|" "$CONFIG_FILE"
+    ;;
+    --static|-S)
+      kill_mpvpaper
+      waypaper --backend swww --folder $wallpaperFolder
+      sed -i "s|^backend=.*|backend=swww|" "$CONFIG_FILE"
+    ;;
+    --random|-R)
+      kill_mpvpaper
+      waypaper --random --backend swww --folder $wallpaperFolder
+      sed -i "s|^backend=.*|backend=swww|" "$CONFIG_FILE"
+    ;;
+    --random-video|-A)
+      kill_mpvpaper
+      waypaper --random --backend mpvpaper --folder $videoWallpaperFolder
+      sed -i "s|^backend=.*|backend=mpvpaper|" "$CONFIG_FILE"
+    ;;
+    --wall|-w)
+      backend_checker "$2"
+    ;;
+    --help|-H) help_command
+    ;;
+  esac
+}
 
-exit 0
+main "$@"
